@@ -65,10 +65,11 @@ function setManifestLink(manifest: Manifest) {
   e.setAttribute("href", manifestURL);
 }
 
-function updatePageManafest(manifest: Manifest) {
-  porpulateDisplayedForm(manifest);
+function updatePageManafest(manifest: Manifest): boolean {
+  populateDisplayedForm(manifest);
   updateToLS(manifest);
   setManifestLink(manifest);
+  return true;
 }
 
 function prepareManifest(): Manifest {
@@ -79,32 +80,20 @@ function prepareManifest(): Manifest {
   return manifest;
 }
 
-function porpulateDisplayedForm(manifest: Manifest) {
+function populateDisplayedForm(manifest: Manifest) {
+  let form = document.getElementById("manifest-form") as HTMLFormElement;
+  form.reset();
+
   let property: keyof typeof manifest;
   for (property in manifest) {
     let e = document.getElementById(property) as HTMLInputElement;
     if (!e) {
+      console.log("Unable to find display Element for property:" + property);
       continue;
     }
     e.value = `${manifest[property]}`;
   }
 }
-
-const onFormSubmit = (
-  manifest: Manifest,
-  event: React.FormEvent<HTMLFormElement>
-) => {
-  event.preventDefault();
-  const formData = new FormData(event.currentTarget as HTMLFormElement);
-  formData.forEach((value, property: string) => {
-    let key = property as keyof Manifest;
-    if (key && key !== "icons") {
-      manifest[key] = value as string;
-    }
-  });
-  //Form submission:
-  updatePageManafest(manifest);
-};
 
 function ManifestItemLabel(props: any) {
   return (
@@ -140,10 +129,29 @@ function App() {
     updatePageManafest(manifest);
   }, [manifest]);
 
+  const [showResult, setShowResult] = React.useState(false);
+
+  const onFormSubmit = (
+    manifest: Manifest,
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget as HTMLFormElement);
+    formData.forEach((value, property: string) => {
+      let key = property as keyof Manifest;
+      if (key && key !== "icons") {
+        manifest[key] = value as string;
+      }
+    });
+    //Form submission:
+    setShowResult(updatePageManafest(manifest));
+  };
+
   return (
     <Paper elevation={3} sx={{ marginRight: "15%", marginLeft: "15%" }}>
       <Box
         component="form"
+        id="manifest-form"
         onSubmit={(e) => onFormSubmit(manifest, e)}
         sx={{ padding: 5 }}
       >
@@ -172,29 +180,32 @@ function App() {
           <Grid item xs={8} sm={9}>
             <ManifestItem id="scope" label="Scope" type="url" />
           </Grid>
-          <Grid item xs={4} sm={4}>
+          <Grid item xs={12} hidden={!showResult}>
+            Done!
+          </Grid>
+          <Grid item xs={4}>
             <Button
               variant="contained"
               onClick={() => {
                 manifest = initManifest(window.location.origin);
-                updatePageManafest(manifest);
+                setShowResult(updatePageManafest(manifest));
               }}
             >
               Reset
             </Button>
           </Grid>
-          <Grid item xs={4} sm={4}>
+          <Grid item xs={4}>
             <Button
               variant="contained"
               onClick={() => {
-                manifest = {};
-                updatePageManafest(manifest);
+                manifest = { name: "" };
+                setShowResult(updatePageManafest(manifest));
               }}
             >
               Clear
             </Button>
           </Grid>
-          <Grid item xs={4} sm={4}>
+          <Grid item xs={4}>
             <Button variant="contained" type="submit">
               Submit
             </Button>
