@@ -1,17 +1,18 @@
-import { React, useState } from "react";
-import { Box, Grid, InputLabel, TextField, Paper } from "@mui/material";
+import React from "react";
+import { useState } from "react";
+import { Box, Button, Grid, InputLabel, TextField, Paper } from "@mui/material";
 
 import "./App.css";
 
 type Manifest = {
-  name: string;
-  description: string;
-  icons: Array<object>;
-  background_color: string;
-  theme_color: string;
-  display: string;
-  scope: string;
-  start_url: string;
+  name?: string;
+  description?: string;
+  icons?: Array<object> | null;
+  background_color?: string;
+  theme_color?: string;
+  display?: string;
+  scope?: string;
+  start_url?: string;
 };
 
 function readLSManifest(): Manifest | null {
@@ -50,7 +51,7 @@ function initManifest(scope: string): Manifest {
   };
 }
 
-function setPageManifest(manifest: Manifest) {
+function setManifestLink(manifest: Manifest) {
   let e = document.getElementById("manifest-placeholder") as HTMLLinkElement;
   if (!e) {
     e = document.createElement<"link">("link");
@@ -64,6 +65,12 @@ function setPageManifest(manifest: Manifest) {
   e.setAttribute("href", manifestURL);
 }
 
+function updatePageManafest(manifest: Manifest) {
+  porpulateDisplayedForm(manifest);
+  updateToLS(manifest);
+  setManifestLink(manifest);
+}
+
 function prepareManifest(): Manifest {
   let manifest = readLSManifest();
   if (!manifest) {
@@ -75,7 +82,8 @@ function prepareManifest(): Manifest {
 function porpulateDisplayedForm(manifest: Manifest) {
   let property: keyof typeof manifest;
   for (property in manifest) {
-    let e = document.getElementById(`manifest.${property}`) as HTMLInputElement;
+    let e = document.getElementById(property) as HTMLInputElement;
+    console.log(`${property}: ${manifest[property]}`, e);
     if (!e) {
       continue;
     }
@@ -83,15 +91,21 @@ function porpulateDisplayedForm(manifest: Manifest) {
   }
 }
 
-function getManifestFromForm(): Manifest {
-  return initManifest(window.location.origin);
-}
-
-function onFormChanged() {
-  let newManifest = getManifestFromForm();
-  updateToLS(newManifest);
-  setPageManifest(newManifest);
-}
+const onFormSubmit = (
+  manifest: Manifest,
+  event: React.FormEvent<HTMLFormElement>
+) => {
+  event.preventDefault();
+  const formData = new FormData(event.currentTarget as HTMLFormElement);
+  formData.forEach((value, property: string) => {
+    let key = property as keyof Manifest;
+    if (key && key !== "icons") {
+      manifest[key] = value as string;
+    }
+  });
+  //Form submission:
+  updatePageManafest(manifest);
+};
 
 function ManifestItemLabel(props: any) {
   return (
@@ -110,8 +124,9 @@ function ManifestItem(props: any) {
   return (
     <TextField
       id={props.id}
+      name={props.id}
       type={props.type || "text"}
-      label={props.name}
+      label={props.label}
       fullWidth
       size="small"
       autoComplete="off"
@@ -122,40 +137,66 @@ function ManifestItem(props: any) {
 
 function App() {
   let manifest = prepareManifest();
-  setPageManifest(manifest);
-  porpulateDisplayedForm(manifest);
+  updatePageManafest(manifest);
 
   return (
     <Paper elevation={3} sx={{ marginRight: "15%", marginLeft: "15%" }}>
-      <Box sx={{ padding: 5 }}>
+      <Box
+        component="form"
+        onSubmit={(e) => onFormSubmit(manifest, e)}
+        sx={{ padding: 5 }}
+      >
         <Grid container spacing={2}>
           <Grid item xs={4} sm={2}>
             <ManifestItemLabel name="Name" />
           </Grid>
           <Grid item xs={6} sm={4}>
-            <ManifestItem id="manifest.name" label="Name" />
+            <ManifestItem id="name" label="Name" />
           </Grid>
           <Grid item xs={4} sm={2}>
             <ManifestItemLabel name="Short Name" />
           </Grid>
           <Grid item xs={6} sm={4}>
-            <ManifestItem id="manifest.short_name" label="ShortName" />
+            <ManifestItem id="short_name" label="ShortName" />
           </Grid>
           <Grid item xs={4} sm={2}>
             <ManifestItemLabel name="Start URL" />
           </Grid>
           <Grid item xs={8} sm={9}>
-            <ManifestItem
-              id="manifest.start_url"
-              label="Start URL"
-              type="url"
-            />
+            <ManifestItem id="start_url" label="Start URL" type="url" />
           </Grid>
           <Grid item xs={4} sm={2}>
             <ManifestItemLabel name="Scope" />
           </Grid>
           <Grid item xs={8} sm={9}>
-            <ManifestItem id="manifest.scope" label="Scope" type="url" />
+            <ManifestItem id="scope" label="Scope" type="url" />
+          </Grid>
+          <Grid item xs={4} sm={4}>
+            <Button
+              variant="contained"
+              onClick={() => {
+                manifest = initManifest(window.location.origin);
+                updatePageManafest(manifest);
+              }}
+            >
+              Reset
+            </Button>
+          </Grid>
+          <Grid item xs={4} sm={4}>
+            <Button
+              variant="contained"
+              onClick={() => {
+                manifest = {};
+                updatePageManafest(manifest);
+              }}
+            >
+              Clear
+            </Button>
+          </Grid>
+          <Grid item xs={4} sm={4}>
+            <Button variant="contained" type="submit">
+              Submit
+            </Button>
           </Grid>
         </Grid>
       </Box>
