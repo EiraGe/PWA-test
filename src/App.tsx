@@ -1,4 +1,4 @@
-import React from 'react';
+import { React, useState } from "react";
 import { Box, Grid, InputLabel, TextField, Paper } from "@mui/material";
 
 import "./App.css";
@@ -46,7 +46,7 @@ function initManifest(scope: string): Manifest {
     theme_color: "white",
     display: "standalone",
     scope: scope,
-    start_url: scope + "/.",
+    start_url: scope,
   };
 }
 
@@ -72,7 +72,16 @@ function prepareManifest(): Manifest {
   return manifest;
 }
 
-function updateDisplayedForm(manifest: Manifest) {}
+function porpulateDisplayedForm(manifest: Manifest) {
+  let property: keyof typeof manifest;
+  for (property in manifest) {
+    let e = document.getElementById(`manifest.${property}`) as HTMLInputElement;
+    if (!e) {
+      continue;
+    }
+    e.value = `${manifest[property]}`;
+  }
+}
 
 function getManifestFromForm(): Manifest {
   return initManifest(window.location.origin);
@@ -114,7 +123,7 @@ function ManifestItem(props: any) {
 function App() {
   let manifest = prepareManifest();
   setPageManifest(manifest);
-  updateDisplayedForm(manifest);
+  porpulateDisplayedForm(manifest);
 
   return (
     <Paper elevation={3} sx={{ marginRight: "15%", marginLeft: "15%" }}>
@@ -124,20 +133,20 @@ function App() {
             <ManifestItemLabel name="Name" />
           </Grid>
           <Grid item xs={6} sm={4}>
-            <ManifestItem id="manifest-name" label="Name" />
+            <ManifestItem id="manifest.name" label="Name" />
           </Grid>
           <Grid item xs={4} sm={2}>
             <ManifestItemLabel name="Short Name" />
           </Grid>
           <Grid item xs={6} sm={4}>
-            <ManifestItem id="manifest-short-name" label="ShortName" />
+            <ManifestItem id="manifest.short_name" label="ShortName" />
           </Grid>
           <Grid item xs={4} sm={2}>
             <ManifestItemLabel name="Start URL" />
           </Grid>
           <Grid item xs={8} sm={9}>
             <ManifestItem
-              id="manifest-start-url"
+              id="manifest.start_url"
               label="Start URL"
               type="url"
             />
@@ -146,7 +155,7 @@ function App() {
             <ManifestItemLabel name="Scope" />
           </Grid>
           <Grid item xs={8} sm={9}>
-            <ManifestItem id="manifest-scope" label="Scope" type="url" />
+            <ManifestItem id="manifest.scope" label="Scope" type="url" />
           </Grid>
         </Grid>
       </Box>
