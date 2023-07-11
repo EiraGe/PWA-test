@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Box, Button, Grid, InputLabel, TextField, Paper } from "@mui/material";
 
 import "./App.css";
@@ -83,7 +83,6 @@ function porpulateDisplayedForm(manifest: Manifest) {
   let property: keyof typeof manifest;
   for (property in manifest) {
     let e = document.getElementById(property) as HTMLInputElement;
-    console.log(`${property}: ${manifest[property]}`, e);
     if (!e) {
       continue;
     }
@@ -137,7 +136,9 @@ function ManifestItem(props: any) {
 
 function App() {
   let manifest = prepareManifest();
-  updatePageManafest(manifest);
+  useEffect(() => {
+    updatePageManafest(manifest);
+  }, [manifest]);
 
   return (
     <Paper elevation={3} sx={{ marginRight: "15%", marginLeft: "15%" }}>
