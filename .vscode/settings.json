@@ -1,0 +1,13 @@
+{
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "modifications",
+    "editor.tabSize": 2,
+    "editor.rulers": [80],
+    // Forces LF instead of "auto" which uses CRLF on Windows.
+    "files.eol": "\n",
+    // Trim tailing whitespace on save.
+    "files.trimTrailingWhitespace": true,
+    // Insert trimmed final new line.
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+}

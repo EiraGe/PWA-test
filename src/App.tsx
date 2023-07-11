@@ -54,8 +54,8 @@ function setPageManifest(manifest: Manifest) {
   let e = document.getElementById("manifest-placeholder") as HTMLLinkElement;
   if (!e) {
     e = document.createElement<"link">("link");
-    e.id = "manifest-placeholder"
-    e.rel = "manifest"
+    e.id = "manifest-placeholder";
+    e.rel = "manifest";
   }
 
   const stringManifest = JSON.stringify(manifest);
