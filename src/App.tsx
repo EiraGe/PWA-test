@@ -3,7 +3,18 @@ import Button from '@mui/material/Button';
 
 import './App.css';
 
-function readLSManifest() {
+type Manifest = {
+  name: string;
+  description: string;
+  icons: Array<object>;
+  background_color: string;
+  theme_color: string;
+  display: string;
+  scope: string;
+  start_url: string;
+}
+
+function readLSManifest() : Manifest | null {
   let manifest = localStorage.getItem("manifest");
   if (!manifest) {
     return null
@@ -11,12 +22,11 @@ function readLSManifest() {
   return JSON.parse(manifest);
 }
 
-function updateToLS(manifest: JSON) {
+function updateToLS(manifest: Manifest) {
   localStorage.setItem("manifest", JSON.stringify(manifest));
 }
 
-function initManifest(scope: string) {
-
+function initManifest(scope: string) : Manifest {
   return {
     name: "PWA-test",
     description: "A test PWA",
@@ -40,7 +50,7 @@ function initManifest(scope: string) {
   };
 }
 
-function setPageManifest(manifest: JSON) {
+function setPageManifest(manifest: Manifest) {
   let e = document.getElementById("manifest-placeholder") as HTMLLinkElement;
   if (!e) {
     e = document.createElement<"link">("link");
@@ -54,7 +64,7 @@ function setPageManifest(manifest: JSON) {
   e.setAttribute("href", manifestURL);
 }
 
-function prepareManifest() : JSON {
+function prepareManifest() : Manifest {
   let manifest = readLSManifest();
   if (!manifest) {
     manifest = initManifest(window.location.origin)
@@ -62,9 +72,24 @@ function prepareManifest() : JSON {
   return manifest
 }
 
+function updateDisplayedForm(manifest: Manifest) {
+
+}
+
+function getManifestFromForm(): Manifest {
+  return initManifest(window.location.origin);
+}
+
+function onFormChanged() {
+  let newManifest = getManifestFromForm()
+  updateToLS(newManifest)
+  setPageManifest(newManifest)
+}
+
 function App() {
   let manifest = prepareManifest()
   setPageManifest(manifest)
+  updateDisplayedForm(manifest)
 
   return (
     <div>
