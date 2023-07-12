@@ -1,8 +1,10 @@
 import React from "react";
-import { Box, Button, Grid, InputLabel, TextField, Paper } from "@mui/material";
+import { Box, Button, Grid, Paper } from "@mui/material";
 
 import "./App.css";
 import ManifestRadioGroup from "./ManifestRadioGroup";
+import ManifestItemLabel from "./ManifestItemLabel";
+import ManifestTextItem from "./ManifestTextItem";
 
 type ManifestType = {
   name: string;
@@ -107,36 +109,6 @@ function populateDisplayedForm(manifest: ManifestType) {
   }
 }
 
-function ManifestItemLabel(props: any) {
-  return (
-    <InputLabel
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        fontWeight: 700,
-      }}
-    >
-      {props.name}
-    </InputLabel>
-  );
-}
-function ManifestItem(props: any) {
-  return (
-    <TextField
-      id={props.id}
-      name={props.id}
-      type={props.type || "text"}
-      label={props.label}
-      value={props.value}
-      onChange={props.onChange}
-      fullWidth
-      size="small"
-      autoComplete="off"
-      variant="outlined"
-    />
-  );
-}
-
 function App() {
   const initialManifest = prepareManifest();
   React.useEffect(() => {
@@ -193,7 +165,7 @@ function App() {
             <ManifestItemLabel name="Name" />
           </Grid>
           <Grid item xs={6} sm={4}>
-            <ManifestItem
+            <ManifestTextItem
               id="name"
               label="Name"
               value={manifestValue.name}
@@ -204,7 +176,7 @@ function App() {
             <ManifestItemLabel name="Short Name" />
           </Grid>
           <Grid item xs={6} sm={4}>
-            <ManifestItem
+            <ManifestTextItem
               id="short_name"
               label="ShortName"
               value={manifestValue.short_name}
@@ -215,7 +187,7 @@ function App() {
             <ManifestItemLabel name="Start URL" />
           </Grid>
           <Grid item xs={8} sm={9}>
-            <ManifestItem
+            <ManifestTextItem
               id="start_url"
               label="Start URL"
               value={manifestValue.start_url}
@@ -226,7 +198,7 @@ function App() {
             <ManifestItemLabel name="Scope" />
           </Grid>
           <Grid item xs={8} sm={9}>
-            <ManifestItem
+            <ManifestTextItem
               id="scope"
               label="Scope"
               value={manifestValue.scope}
