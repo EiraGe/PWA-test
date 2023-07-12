@@ -4,7 +4,7 @@ import { Box, Button, Grid, InputLabel, TextField, Paper } from "@mui/material";
 import "./App.css";
 import ManifestRadioGroup from "./ManifestRadioGroup";
 
-type Manifest = {
+type ManifestType = {
   name: string;
   short_name: string;
   start_url: string;
@@ -16,7 +16,7 @@ type Manifest = {
   theme_color?: string;
 };
 
-function emptyManifest(): Manifest {
+function emptyManifest(): ManifestType {
   return {
     name: "",
     short_name: "",
@@ -27,7 +27,7 @@ function emptyManifest(): Manifest {
   };
 }
 
-function initManifest(scope: string): Manifest {
+function initManifest(scope: string): ManifestType {
   return {
     name: "PWA-test",
     short_name: "",
@@ -52,7 +52,7 @@ function initManifest(scope: string): Manifest {
   };
 }
 
-function readLSManifest(): Manifest | null {
+function readLSManifest(): ManifestType | null {
   let manifestString = localStorage.getItem("manifest");
   if (!manifestString) {
     return null;
@@ -66,11 +66,11 @@ function readLSManifest(): Manifest | null {
   return loadedManifest;
 }
 
-function updateToLS(manifest: Manifest) {
+function updateToLS(manifest: ManifestType) {
   localStorage.setItem("manifest", JSON.stringify(manifest));
 }
 
-function setManifestLink(manifest: Manifest) {
+function setManifestLink(manifest: ManifestType) {
   let e = document.getElementById("manifest-placeholder") as HTMLLinkElement;
   if (!e) {
     e = document.createElement<"link">("link");
@@ -84,7 +84,7 @@ function setManifestLink(manifest: Manifest) {
   e.setAttribute("href", manifestURL);
 }
 
-function prepareManifest(): Manifest {
+function prepareManifest(): ManifestType {
   let manifest = readLSManifest();
   if (!manifest) {
     manifest = initManifest(window.location.origin);
@@ -92,7 +92,7 @@ function prepareManifest(): Manifest {
   return manifest;
 }
 
-function populateDisplayedForm(manifest: Manifest) {
+function populateDisplayedForm(manifest: ManifestType) {
   let form = document.getElementById("manifest-form") as HTMLFormElement;
   form.reset();
 
@@ -146,7 +146,7 @@ function App() {
   const [showResult, setShowResult] = React.useState(false);
 
   const [manifestValue, setManifestValue] =
-    React.useState<Manifest>(initialManifest);
+    React.useState<ManifestType>(initialManifest);
 
   const inputChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -159,10 +159,10 @@ function App() {
     event.preventDefault();
 
     console.log("Getting form data...");
-    let manifest = {} as Manifest;
+    let manifest = {} as ManifestType;
     const formData = new FormData(event.currentTarget as HTMLFormElement);
     formData.forEach((value, property: string) => {
-      let key = property as keyof Manifest;
+      let key = property as keyof ManifestType;
       if (key && key !== "icons") {
         console.log(`Set manifest: ${key} as ${value}`);
         manifest[key] = value as string;
@@ -174,7 +174,7 @@ function App() {
     SubmitNewManifest(manifest);
   };
 
-  const SubmitNewManifest = (manifest: Manifest) => {
+  const SubmitNewManifest = (manifest: ManifestType) => {
     setShowResult(true);
     setManifestLink(manifest);
     updateToLS(manifest);
