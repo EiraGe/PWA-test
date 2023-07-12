@@ -1,8 +1,8 @@
 import React from "react";
-import { useState, useEffect } from "react";
 import { Box, Button, Grid, InputLabel, TextField, Paper } from "@mui/material";
 
 import "./App.css";
+import ManifestRadioGroup from "./ManifestRadioGroup";
 
 type Manifest = {
   name?: string;
@@ -125,7 +125,7 @@ function ManifestItem(props: any) {
 
 function App() {
   let manifest = prepareManifest();
-  useEffect(() => {
+  React.useEffect(() => {
     updatePageManafest(manifest);
   }, [manifest]);
 
@@ -140,7 +140,10 @@ function App() {
     formData.forEach((value, property: string) => {
       let key = property as keyof Manifest;
       if (key && key !== "icons") {
+        console.log(`Set manifest: ${key} as ${value}`);
         manifest[key] = value as string;
+      } else {
+        console.log(`Unable to set ${key} as ${value}`);
       }
     });
     //Form submission:
@@ -180,8 +183,15 @@ function App() {
           <Grid item xs={8} sm={9}>
             <ManifestItem id="scope" label="Scope" type="url" />
           </Grid>
-          <Grid item xs={12} hidden={!showResult}>
-            Done!
+          <Grid item xs={4} sm={2}>
+            <ManifestItemLabel name="Display" />
+          </Grid>
+          <Grid item xs={10} sm={8}>
+            <ManifestRadioGroup
+              id="display"
+              value="standalone"
+              items={["fullscreen", "standalone", "minimal-ui", "browser"]}
+            />
           </Grid>
           <Grid item xs={4}>
             <Button
@@ -209,6 +219,9 @@ function App() {
             <Button variant="contained" type="submit">
               Submit
             </Button>
+          </Grid>
+          <Grid item xs={12} hidden={!showResult}>
+            Done!
           </Grid>
         </Grid>
       </Box>
