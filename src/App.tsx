@@ -130,6 +130,7 @@ function App() {
   }, [manifest]);
 
   const [showResult, setShowResult] = React.useState(false);
+  const [display, setDisplay] = React.useState("browser");
 
   const onFormSubmit = (
     manifest: Manifest,
@@ -147,6 +148,7 @@ function App() {
       }
     });
     //Form submission:
+    // setDisplay("standalone");
     setShowResult(updatePageManafest(manifest));
   };
 
@@ -189,7 +191,7 @@ function App() {
           <Grid item xs={10} sm={8}>
             <ManifestRadioGroup
               id="display"
-              value="standalone"
+              value={display}
               items={["fullscreen", "standalone", "minimal-ui", "browser"]}
             />
           </Grid>

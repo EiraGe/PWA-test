@@ -34,6 +34,11 @@ function MyFormControlLabel(props: FormControlLabelProps) {
 }
 
 export default function RowRadioButtonsGroup(props: ManifestSelectionProps) {
+  // const [value, setValue] = React.useState(props.value);
+  // const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setValue((event.target as HTMLInputElement).value);
+  // };
+
   let itemList = props.items.map((item: string) => {
     return (
       <MyFormControlLabel
@@ -46,7 +51,7 @@ export default function RowRadioButtonsGroup(props: ManifestSelectionProps) {
   });
   return (
     <FormControl>
-      <RadioGroup row name={props.id} defaultValue={props.value}>
+      <RadioGroup row name={props.id} value={props.value}>
         {itemList}
       </RadioGroup>
     </FormControl>
