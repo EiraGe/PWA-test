@@ -65,13 +65,6 @@ function setManifestLink(manifest: Manifest) {
   e.setAttribute("href", manifestURL);
 }
 
-function updatePageManafest(manifest: Manifest): boolean {
-  populateDisplayedForm(manifest);
-  updateToLS(manifest);
-  setManifestLink(manifest);
-  return true;
-}
-
 function prepareManifest(): Manifest {
   let manifest = readLSManifest();
   if (!manifest) {
@@ -124,19 +117,20 @@ function ManifestItem(props: any) {
 }
 
 function App() {
-  let manifest = prepareManifest();
   React.useEffect(() => {
-    updatePageManafest(manifest);
-  }, [manifest]);
+    let manifest = prepareManifest();
+    populateDisplayedForm(manifest);
+    setManifestLink(manifest);
+  }, []);
 
   const [showResult, setShowResult] = React.useState(false);
   const [display, setDisplay] = React.useState("browser");
 
-  const onFormSubmit = (
-    manifest: Manifest,
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
+  const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    console.log("Getting form data...");
+    let manifest = {} as Manifest;
     const formData = new FormData(event.currentTarget as HTMLFormElement);
     formData.forEach((value, property: string) => {
       let key = property as keyof Manifest;
@@ -148,8 +142,13 @@ function App() {
       }
     });
     //Form submission:
-    // setDisplay("standalone");
-    setShowResult(updatePageManafest(manifest));
+    SubmitNewManifest(manifest);
+  };
+
+  const SubmitNewManifest = (manifest: Manifest) => {
+    setShowResult(true);
+    setManifestLink(manifest);
+    updateToLS(manifest);
   };
 
   return (
@@ -157,7 +156,10 @@ function App() {
       <Box
         component="form"
         id="manifest-form"
-        onSubmit={(e) => onFormSubmit(manifest, e)}
+        onChange={(e) => {
+          setShowResult(false);
+        }}
+        onSubmit={onFormSubmit}
         sx={{ padding: 5 }}
       >
         <Grid container spacing={2}>
@@ -192,6 +194,9 @@ function App() {
             <ManifestRadioGroup
               id="display"
               value={display}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setDisplay((e.target as HTMLInputElement).value);
+              }}
               items={["fullscreen", "standalone", "minimal-ui", "browser"]}
             />
           </Grid>
@@ -199,8 +204,9 @@ function App() {
             <Button
               variant="contained"
               onClick={() => {
-                manifest = initManifest(window.location.origin);
-                setShowResult(updatePageManafest(manifest));
+                let manifest = initManifest(window.location.origin);
+                populateDisplayedForm(manifest);
+                SubmitNewManifest(manifest);
               }}
             >
               Reset
@@ -210,8 +216,9 @@ function App() {
             <Button
               variant="contained"
               onClick={() => {
-                manifest = { name: "" };
-                setShowResult(updatePageManafest(manifest));
+                let manifest = { name: "" };
+                populateDisplayedForm(manifest);
+                SubmitNewManifest(manifest);
               }}
             >
               Clear

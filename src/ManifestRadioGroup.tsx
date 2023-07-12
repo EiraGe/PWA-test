@@ -11,6 +11,7 @@ type ManifestSelectionProps = {
   id: string;
   value: string;
   items: Array<string>;
+  onChange: any;
 };
 
 const StyledFormControlLabel = styled((props: FormControlLabelProps) => (
@@ -50,10 +51,13 @@ export default function RowRadioButtonsGroup(props: ManifestSelectionProps) {
     );
   });
   return (
-    <FormControl>
-      <RadioGroup row name={props.id} value={props.value}>
-        {itemList}
-      </RadioGroup>
-    </FormControl>
+    <RadioGroup
+      row
+      name={props.id}
+      value={props.value}
+      onChange={props.onChange}
+    >
+      {itemList}
+    </RadioGroup>
   );
 }
