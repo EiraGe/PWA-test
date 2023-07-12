@@ -5,31 +5,32 @@ import "./App.css";
 import ManifestRadioGroup from "./ManifestRadioGroup";
 
 type Manifest = {
-  name?: string;
+  name: string;
+  short_name: string;
+  start_url: string;
+  scope: string;
+  display: string;
   description?: string;
   icons?: Array<object> | null;
   background_color?: string;
   theme_color?: string;
-  display?: string;
-  scope?: string;
-  start_url?: string;
 };
 
-function readLSManifest(): Manifest | null {
-  let manifest = localStorage.getItem("manifest");
-  if (!manifest) {
-    return null;
-  }
-  return JSON.parse(manifest);
-}
-
-function updateToLS(manifest: Manifest) {
-  localStorage.setItem("manifest", JSON.stringify(manifest));
+function emptyManifest(): Manifest {
+  return {
+    name: "",
+    short_name: "",
+    start_url: "",
+    scope: "",
+    display: "",
+    icons: [],
+  };
 }
 
 function initManifest(scope: string): Manifest {
   return {
     name: "PWA-test",
+    short_name: "",
     description: "A test PWA",
     icons: [
       {
@@ -49,6 +50,24 @@ function initManifest(scope: string): Manifest {
     scope: scope,
     start_url: scope,
   };
+}
+
+function readLSManifest(): Manifest | null {
+  let manifestString = localStorage.getItem("manifest");
+  if (!manifestString) {
+    return null;
+  }
+  let manifestJson = JSON.parse(manifestString);
+  let loadedManifest = emptyManifest();
+  let property: keyof typeof loadedManifest;
+  for (property in loadedManifest) {
+    loadedManifest[property] = manifestJson[property];
+  }
+  return loadedManifest;
+}
+
+function updateToLS(manifest: Manifest) {
+  localStorage.setItem("manifest", JSON.stringify(manifest));
 }
 
 function setManifestLink(manifest: Manifest) {
@@ -108,6 +127,8 @@ function ManifestItem(props: any) {
       name={props.id}
       type={props.type || "text"}
       label={props.label}
+      value={props.value}
+      onChange={props.onChange}
       fullWidth
       size="small"
       autoComplete="off"
@@ -117,14 +138,22 @@ function ManifestItem(props: any) {
 }
 
 function App() {
+  const initialManifest = prepareManifest();
   React.useEffect(() => {
-    let manifest = prepareManifest();
-    populateDisplayedForm(manifest);
-    setManifestLink(manifest);
-  }, []);
+    setManifestLink(initialManifest);
+  });
 
   const [showResult, setShowResult] = React.useState(false);
-  const [display, setDisplay] = React.useState("browser");
+
+  const [manifestValue, setManifestValue] =
+    React.useState<Manifest>(initialManifest);
+
+  const inputChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    console.log(name, value);
+    setManifestValue({ ...manifestValue, [name]: value });
+    setShowResult(false);
+  };
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -156,9 +185,6 @@ function App() {
       <Box
         component="form"
         id="manifest-form"
-        onChange={(e) => {
-          setShowResult(false);
-        }}
         onSubmit={onFormSubmit}
         sx={{ padding: 5 }}
       >
@@ -167,25 +193,45 @@ function App() {
             <ManifestItemLabel name="Name" />
           </Grid>
           <Grid item xs={6} sm={4}>
-            <ManifestItem id="name" label="Name" />
+            <ManifestItem
+              id="name"
+              label="Name"
+              value={manifestValue.name}
+              onChange={inputChangeHandler}
+            />
           </Grid>
           <Grid item xs={4} sm={2}>
             <ManifestItemLabel name="Short Name" />
           </Grid>
           <Grid item xs={6} sm={4}>
-            <ManifestItem id="short_name" label="ShortName" />
+            <ManifestItem
+              id="short_name"
+              label="ShortName"
+              value={manifestValue.short_name}
+              onChange={inputChangeHandler}
+            />
           </Grid>
           <Grid item xs={4} sm={2}>
             <ManifestItemLabel name="Start URL" />
           </Grid>
           <Grid item xs={8} sm={9}>
-            <ManifestItem id="start_url" label="Start URL" type="url" />
+            <ManifestItem
+              id="start_url"
+              label="Start URL"
+              value={manifestValue.start_url}
+              onChange={inputChangeHandler}
+            />
           </Grid>
           <Grid item xs={4} sm={2}>
             <ManifestItemLabel name="Scope" />
           </Grid>
           <Grid item xs={8} sm={9}>
-            <ManifestItem id="scope" label="Scope" type="url" />
+            <ManifestItem
+              id="scope"
+              label="Scope"
+              value={manifestValue.scope}
+              onChange={inputChangeHandler}
+            />
           </Grid>
           <Grid item xs={4} sm={2}>
             <ManifestItemLabel name="Display" />
@@ -193,10 +239,8 @@ function App() {
           <Grid item xs={10} sm={8}>
             <ManifestRadioGroup
               id="display"
-              value={display}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setDisplay((e.target as HTMLInputElement).value);
-              }}
+              value={manifestValue.display}
+              onChange={inputChangeHandler}
               items={["fullscreen", "standalone", "minimal-ui", "browser"]}
             />
           </Grid>
@@ -204,9 +248,9 @@ function App() {
             <Button
               variant="contained"
               onClick={() => {
-                let manifest = initManifest(window.location.origin);
-                populateDisplayedForm(manifest);
-                SubmitNewManifest(manifest);
+                let newManifest = initManifest(window.location.origin);
+                setManifestValue(newManifest);
+                SubmitNewManifest(newManifest);
               }}
             >
               Reset
@@ -216,9 +260,9 @@ function App() {
             <Button
               variant="contained"
               onClick={() => {
-                let manifest = { name: "" };
-                populateDisplayedForm(manifest);
-                SubmitNewManifest(manifest);
+                let newManifest = emptyManifest();
+                setManifestValue(newManifest);
+                SubmitNewManifest(newManifest);
               }}
             >
               Clear
