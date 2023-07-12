@@ -94,21 +94,6 @@ function prepareManifest(): ManifestType {
   return manifest;
 }
 
-function populateDisplayedForm(manifest: ManifestType) {
-  let form = document.getElementById("manifest-form") as HTMLFormElement;
-  form.reset();
-
-  let property: keyof typeof manifest;
-  for (property in manifest) {
-    let e = document.getElementById(property) as HTMLInputElement;
-    if (!e) {
-      console.log("Unable to find display Element for property:" + property);
-      continue;
-    }
-    e.value = `${manifest[property]}`;
-  }
-}
-
 function App() {
   const initialManifest = prepareManifest();
   React.useEffect(() => {
