@@ -5,12 +5,12 @@ import FormControlLabel, {
   FormControlLabelProps,
 } from "@mui/material/FormControlLabel";
 
-type ManifestSelectionProps = {
+interface ManifestSelectionProps {
   id: string;
   value?: string;
-  items: Array<string>;
+  selections: Array<string>;
   onChange: any;
-};
+}
 
 const StyledFormControlLabel = styled((props: FormControlLabelProps) => (
   <FormControlLabel {...props} />
@@ -32,17 +32,7 @@ function MyFormControlLabel(props: FormControlLabelProps) {
   return <StyledFormControlLabel checked={checked} {...props} />;
 }
 
-export function ManifestRadioGroup(props: ManifestSelectionProps) {
-  let itemList = props.items.map((item: string) => {
-    return (
-      <MyFormControlLabel
-        key={item}
-        value={item}
-        control={<Radio />}
-        label={item}
-      />
-    );
-  });
+export function ManifestRadioGroupItem(props: ManifestSelectionProps) {
   return (
     <RadioGroup
       row
@@ -50,7 +40,16 @@ export function ManifestRadioGroup(props: ManifestSelectionProps) {
       value={props.value}
       onChange={props.onChange}
     >
-      {itemList}
+      {props.selections.map((item: string) => {
+        return (
+          <MyFormControlLabel
+            key={item}
+            value={item}
+            control={<Radio />}
+            label={item}
+          />
+        );
+      })}
     </RadioGroup>
   );
 }

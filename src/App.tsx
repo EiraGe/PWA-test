@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Button, Grid, Paper } from "@mui/material";
 
 import "./App.css";
-import { ManifestRadioGroup } from "./ManifestRadioGroup";
+import { ManifestRadioGroupItem } from "./ManifestRadioGroupItem";
 import { manifestItemsList } from "./ManifestItemsList";
 import { ManifestItemLabel } from "./ManifestItemLabel";
 import { ManifestTextItem } from "./ManifestTextItem";
@@ -15,8 +15,8 @@ type ManifestType = {
   display: string;
   orientation: string;
   start_url: string;
-  theme_color?: string;
-  background_color?: string;
+  theme_color: string;
+  background_color: string;
   description?: string;
 };
 
@@ -28,7 +28,20 @@ function emptyManifest(): ManifestType {
     scope: "",
     display: "",
     orientation: "",
-    icons: [],
+    theme_color: "",
+    background_color: "",
+    icons: [
+      {
+        src: window.location.origin + "/logo192.png",
+        type: "image/png",
+        sizes: "192x192",
+      },
+      {
+        src: window.location.origin + "/logo512.png",
+        type: "image/png",
+        sizes: "512x512",
+      },
+    ],
   };
 }
 
@@ -49,8 +62,8 @@ function initManifest(scope: string): ManifestType {
         sizes: "512x512",
       },
     ],
-    background_color: "white",
     theme_color: "white",
+    background_color: "white",
     display: "standalone",
     orientation: "",
     scope: scope,
@@ -120,7 +133,7 @@ function App() {
     event.preventDefault();
 
     console.log("Getting form data...");
-    let manifest = {} as ManifestType;
+    let manifest = emptyManifest();
     const formData = new FormData(event.currentTarget as HTMLFormElement);
     formData.forEach((value, property: string) => {
       let key = property as keyof ManifestType;
@@ -142,7 +155,7 @@ function App() {
   };
 
   return (
-    <Paper elevation={3} sx={{ marginRight: "15%", marginLeft: "15%" }}>
+    <Paper elevation={3} sx={{ marginRight: "0%", marginLeft: "0%" }}>
       <Box
         component="form"
         id="manifest-form"
@@ -161,48 +174,27 @@ function App() {
                   xs={item.size === "sm" ? 6 : 8}
                   sm={item.size === "sm" ? 4 : 9}
                 >
-                  <ManifestTextItem
-                    id={item.id}
-                    label={item.label}
-                    value={manifestValue[item.id as keyof ManifestType]}
-                    onChange={inputChangeHandler}
-                  />
+                  {item.type === "radio" ? (
+                    <ManifestRadioGroupItem
+                      id={item.id}
+                      value={
+                        manifestValue[item.id as keyof ManifestType] as string
+                      }
+                      selections={item.selections as Array<string>}
+                      onChange={inputChangeHandler}
+                    />
+                  ) : (
+                    <ManifestTextItem
+                      id={item.id}
+                      label={item.label}
+                      value={manifestValue[item.id as keyof ManifestType]}
+                      onChange={inputChangeHandler}
+                    />
+                  )}
                 </Grid>
               </React.Fragment>
             );
           })}
-          <Grid item xs={4} sm={2}>
-            <ManifestItemLabel name="Display" />
-          </Grid>
-          <Grid item xs={10} sm={9}>
-            <ManifestRadioGroup
-              id="display"
-              value={manifestValue.display}
-              onChange={inputChangeHandler}
-              items={["fullscreen", "standalone", "minimal-ui", "browser"]}
-            />
-          </Grid>
-          <Grid item xs={4} sm={2}>
-            <ManifestItemLabel name="Orientation" />
-          </Grid>
-          <Grid item xs={10} sm={9}>
-            <ManifestRadioGroup
-              id="orientation"
-              value={manifestValue.orientation}
-              onChange={inputChangeHandler}
-              items={[
-                "any",
-                "natural",
-                "landscape",
-                "portrait",
-                "portrait-primary",
-                "portrait-secondary",
-                "landscape-primary",
-                "landscape-secondary",
-              ]}
-            />
-          </Grid>
-
           <Grid item xs={4}>
             <Button
               variant="contained"
