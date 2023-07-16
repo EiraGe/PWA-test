@@ -1,15 +1,13 @@
-import * as React from "react";
 import { styled } from "@mui/material/styles";
 import Radio from "@mui/material/Radio";
 import RadioGroup, { useRadioGroup } from "@mui/material/RadioGroup";
 import FormControlLabel, {
   FormControlLabelProps,
 } from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
 
 type ManifestSelectionProps = {
   id: string;
-  value: string;
+  value?: string;
   items: Array<string>;
   onChange: any;
 };
@@ -35,11 +33,6 @@ function MyFormControlLabel(props: FormControlLabelProps) {
 }
 
 export function ManifestRadioGroup(props: ManifestSelectionProps) {
-  // const [value, setValue] = React.useState(props.value);
-  // const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setValue((event.target as HTMLInputElement).value);
-  // };
-
   let itemList = props.items.map((item: string) => {
     return (
       <MyFormControlLabel

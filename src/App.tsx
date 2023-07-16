@@ -10,13 +10,14 @@ import { ManifestTextItem } from "./ManifestTextItem";
 type ManifestType = {
   name: string;
   short_name: string;
-  start_url: string;
   scope: string;
-  display: string;
-  description?: string;
   icons?: Array<object> | null;
-  background_color?: string;
+  display: string;
+  orientation: string;
+  start_url: string;
   theme_color?: string;
+  background_color?: string;
+  description?: string;
 };
 
 function emptyManifest(): ManifestType {
@@ -26,6 +27,7 @@ function emptyManifest(): ManifestType {
     start_url: "",
     scope: "",
     display: "",
+    orientation: "",
     icons: [],
   };
 }
@@ -50,6 +52,7 @@ function initManifest(scope: string): ManifestType {
     background_color: "white",
     theme_color: "white",
     display: "standalone",
+    orientation: "",
     scope: scope,
     start_url: scope,
   };
@@ -149,7 +152,7 @@ function App() {
         <Grid container spacing={2}>
           {manifestItemsList.map((item) => {
             return (
-              <React.Fragment>
+              <React.Fragment key={item.id}>
                 <Grid item xs={4} sm={2}>
                   <ManifestItemLabel name={item.id} />
                 </Grid>
@@ -171,7 +174,7 @@ function App() {
           <Grid item xs={4} sm={2}>
             <ManifestItemLabel name="Display" />
           </Grid>
-          <Grid item xs={10} sm={8}>
+          <Grid item xs={10} sm={9}>
             <ManifestRadioGroup
               id="display"
               value={manifestValue.display}
@@ -179,6 +182,27 @@ function App() {
               items={["fullscreen", "standalone", "minimal-ui", "browser"]}
             />
           </Grid>
+          <Grid item xs={4} sm={2}>
+            <ManifestItemLabel name="Orientation" />
+          </Grid>
+          <Grid item xs={10} sm={9}>
+            <ManifestRadioGroup
+              id="orientation"
+              value={manifestValue.orientation}
+              onChange={inputChangeHandler}
+              items={[
+                "any",
+                "natural",
+                "landscape",
+                "portrait",
+                "portrait-primary",
+                "portrait-secondary",
+                "landscape-primary",
+                "landscape-secondary",
+              ]}
+            />
+          </Grid>
+
           <Grid item xs={4}>
             <Button
               variant="contained"
