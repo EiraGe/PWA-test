@@ -2,9 +2,10 @@ import React from "react";
 import { Box, Button, Grid, Paper } from "@mui/material";
 
 import "./App.css";
-import ManifestRadioGroup from "./ManifestRadioGroup";
-import ManifestItemLabel from "./ManifestItemLabel";
-import ManifestTextItem from "./ManifestTextItem";
+import { ManifestRadioGroup } from "./ManifestRadioGroup";
+import { manifestItemsList } from "./ManifestItemsList";
+import { ManifestItemLabel } from "./ManifestItemLabel";
+import { ManifestTextItem } from "./ManifestTextItem";
 
 type ManifestType = {
   name: string;
@@ -146,50 +147,27 @@ function App() {
         sx={{ padding: 5 }}
       >
         <Grid container spacing={2}>
-          <Grid item xs={4} sm={2}>
-            <ManifestItemLabel name="Name" />
-          </Grid>
-          <Grid item xs={6} sm={4}>
-            <ManifestTextItem
-              id="name"
-              label="Name"
-              value={manifestValue.name}
-              onChange={inputChangeHandler}
-            />
-          </Grid>
-          <Grid item xs={4} sm={2}>
-            <ManifestItemLabel name="Short Name" />
-          </Grid>
-          <Grid item xs={6} sm={4}>
-            <ManifestTextItem
-              id="short_name"
-              label="ShortName"
-              value={manifestValue.short_name}
-              onChange={inputChangeHandler}
-            />
-          </Grid>
-          <Grid item xs={4} sm={2}>
-            <ManifestItemLabel name="Start URL" />
-          </Grid>
-          <Grid item xs={8} sm={9}>
-            <ManifestTextItem
-              id="start_url"
-              label="Start URL"
-              value={manifestValue.start_url}
-              onChange={inputChangeHandler}
-            />
-          </Grid>
-          <Grid item xs={4} sm={2}>
-            <ManifestItemLabel name="Scope" />
-          </Grid>
-          <Grid item xs={8} sm={9}>
-            <ManifestTextItem
-              id="scope"
-              label="Scope"
-              value={manifestValue.scope}
-              onChange={inputChangeHandler}
-            />
-          </Grid>
+          {manifestItemsList.map((item) => {
+            return (
+              <React.Fragment>
+                <Grid item xs={4} sm={2}>
+                  <ManifestItemLabel name={item.id} />
+                </Grid>
+                <Grid
+                  item
+                  xs={item.size === "sm" ? 6 : 8}
+                  sm={item.size === "sm" ? 4 : 9}
+                >
+                  <ManifestTextItem
+                    id={item.id}
+                    label={item.label}
+                    value={manifestValue[item.id as keyof ManifestType]}
+                    onChange={inputChangeHandler}
+                  />
+                </Grid>
+              </React.Fragment>
+            );
+          })}
           <Grid item xs={4} sm={2}>
             <ManifestItemLabel name="Display" />
           </Grid>

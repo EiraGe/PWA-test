@@ -1,6 +1,6 @@
 import TextField from "@mui/material/TextField";
 
-export default function ManifestTextItem(props: any) {
+export function ManifestTextItem(props: any) {
   return (
     <TextField
       id={props.id}

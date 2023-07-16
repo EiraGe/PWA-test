@@ -34,7 +34,7 @@ function MyFormControlLabel(props: FormControlLabelProps) {
   return <StyledFormControlLabel checked={checked} {...props} />;
 }
 
-export default function RowRadioButtonsGroup(props: ManifestSelectionProps) {
+export function ManifestRadioGroup(props: ManifestSelectionProps) {
   // const [value, setValue] = React.useState(props.value);
   // const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   setValue((event.target as HTMLInputElement).value);

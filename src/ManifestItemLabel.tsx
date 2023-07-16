@@ -1,6 +1,6 @@
 import InputLabel from "@mui/material/InputLabel";
 
-export default function ManifestItemLabel(props: any) {
+export function ManifestItemLabel(props: any) {
   return (
     <InputLabel
       sx={{
