@@ -1,4 +1,4 @@
-export interface ManifestItem {
+export interface ManifestItemProps {
   id: string;
   label: string;
   type: string;
@@ -6,7 +6,7 @@ export interface ManifestItem {
   size: "sm" | "md";
 }
 
-export const manifestItemsList: Array<ManifestItem> = [
+export const manifestItemsList: Array<ManifestItemProps> = [
   {
     id: "name",
     label: "Name",

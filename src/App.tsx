@@ -6,6 +6,7 @@ import { ManifestRadioGroupItem } from "./ManifestRadioGroupItem";
 import { manifestItemsList } from "./ManifestItemsList";
 import { ManifestItemLabel } from "./ManifestItemLabel";
 import { ManifestTextItem } from "./ManifestTextItem";
+import { ManifestCheckboxGroupItem } from "./ManifestCheckboxGroupItem";
 
 type ManifestType = {
   name: string;
@@ -129,6 +130,12 @@ function App() {
     setShowResult(false);
   };
 
+  const iconChangeHandler = (name: string, newValue: any) => {
+    console.log(name, newValue);
+    setManifestValue({ ...manifestValue, [name]: newValue });
+    setShowResult(false);
+  };
+
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -195,6 +202,17 @@ function App() {
               </React.Fragment>
             );
           })}
+          <Grid item xs={4} sm={2}>
+            <ManifestItemLabel name="icons" />
+          </Grid>
+          <Grid item xs={8} sm={9}>
+            <ManifestCheckboxGroupItem
+              id="icons"
+              value={[]}
+              selections={["192", "256", "512"]}
+              onChange={iconChangeHandler}
+            />
+          </Grid>
           <Grid item xs={4}>
             <Button
               variant="contained"
