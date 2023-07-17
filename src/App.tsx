@@ -7,70 +7,8 @@ import { manifestItemsList } from "./ManifestItemsList";
 import { ManifestItemLabel } from "./ManifestItemLabel";
 import { ManifestTextItem } from "./ManifestTextItem";
 import { ManifestCheckboxGroupItem } from "./ManifestCheckboxGroupItem";
-
-type ManifestType = {
-  name: string;
-  short_name: string;
-  scope: string;
-  icons?: Array<object> | null;
-  display: string;
-  orientation: string;
-  start_url: string;
-  theme_color: string;
-  background_color: string;
-  description?: string;
-};
-
-function emptyManifest(): ManifestType {
-  return {
-    name: "",
-    short_name: "",
-    start_url: "",
-    scope: "",
-    display: "",
-    orientation: "",
-    theme_color: "",
-    background_color: "",
-    icons: [
-      {
-        src: window.location.origin + "/logo192.png",
-        type: "image/png",
-        sizes: "192x192",
-      },
-      {
-        src: window.location.origin + "/logo512.png",
-        type: "image/png",
-        sizes: "512x512",
-      },
-    ],
-  };
-}
-
-function initManifest(scope: string): ManifestType {
-  return {
-    name: "PWA-test",
-    short_name: "",
-    description: "A test PWA",
-    icons: [
-      {
-        src: scope + "/logo192.png",
-        type: "image/png",
-        sizes: "192x192",
-      },
-      {
-        src: scope + "/logo512.png",
-        type: "image/png",
-        sizes: "512x512",
-      },
-    ],
-    theme_color: "white",
-    background_color: "white",
-    display: "standalone",
-    orientation: "",
-    scope: scope,
-    start_url: scope,
-  };
-}
+import { ManifestType, emptyManifest, initManifest } from "./ManifestType";
+import { setManifestLink } from "./PageManifestMediator";
 
 function readLSManifest(): ManifestType | null {
   let manifestString = localStorage.getItem("manifest");
@@ -88,20 +26,6 @@ function readLSManifest(): ManifestType | null {
 
 function updateToLS(manifest: ManifestType) {
   localStorage.setItem("manifest", JSON.stringify(manifest));
-}
-
-function setManifestLink(manifest: ManifestType) {
-  let e = document.getElementById("manifest-placeholder") as HTMLLinkElement;
-  if (!e) {
-    e = document.createElement<"link">("link");
-    e.id = "manifest-placeholder";
-    e.rel = "manifest";
-  }
-
-  const stringManifest = JSON.stringify(manifest);
-  const blob = new Blob([stringManifest], { type: "application/json" });
-  const manifestURL = URL.createObjectURL(blob);
-  e.setAttribute("href", manifestURL);
 }
 
 function prepareManifest(): ManifestType {
@@ -130,29 +54,15 @@ function App() {
     setShowResult(false);
   };
 
-  const iconChangeHandler = (name: string, newValue: any) => {
-    console.log(name, newValue);
+  const iconChangeHandler = (name: string, newValue: Array<string>) => {
+    console.log("icon changed", name, newValue);
     setManifestValue({ ...manifestValue, [name]: newValue });
     setShowResult(false);
   };
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    console.log("Getting form data...");
-    let manifest = emptyManifest();
-    const formData = new FormData(event.currentTarget as HTMLFormElement);
-    formData.forEach((value, property: string) => {
-      let key = property as keyof ManifestType;
-      if (key && key !== "icons") {
-        console.log(`Set manifest: ${key} as ${value}`);
-        manifest[key] = value as string;
-      } else {
-        console.log(`Unable to set ${key} as ${value}`);
-      }
-    });
-    //Form submission:
-    SubmitNewManifest(manifest);
+    SubmitNewManifest(manifestValue);
   };
 
   const SubmitNewManifest = (manifest: ManifestType) => {
@@ -208,7 +118,7 @@ function App() {
           <Grid item xs={8} sm={9}>
             <ManifestCheckboxGroupItem
               id="icons"
-              value={[]}
+              value={manifestValue.icons}
               selections={["192", "256", "512"]}
               onChange={iconChangeHandler}
             />

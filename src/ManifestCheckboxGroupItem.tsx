@@ -19,7 +19,7 @@ export function ManifestCheckboxGroupItem(props: ManifestMultiSelectProps) {
     } else {
       selected.delete(event.target.name);
     }
-    props.onChange(props.id, selected);
+    props.onChange(props.id, Array.from(selected.values()));
   };
 
   return (
