@@ -1,7 +1,14 @@
+import React from "react";
+
+import { Grid } from "@mui/material";
+
+import { ManifestFormControlItem } from "./ManifestItem";
+import { ManifestItemLabel } from "./ManifestItemLabel";
+
 export interface ManifestItemProps {
   id: string;
   label: string;
-  type: string;
+  type: "text" | "radio" | "checkbox";
   selections?: Array<string>;
   size: "sm" | "md";
 }
@@ -66,4 +73,41 @@ export const manifestItemsList: Array<ManifestItemProps> = [
     type: "text",
     size: "sm",
   },
+  {
+    id: "icons",
+    label: "Icons",
+    type: "checkbox",
+    selections: ["128", "192", "256", "512"],
+    size: "md",
+  },
 ];
+
+export function ManifestItemsList(props: any) {
+  return (
+    <React.Fragment>
+      {manifestItemsList.map((item) => {
+        return (
+          <React.Fragment key={item.id}>
+            <Grid item xs={4} sm={2}>
+              <ManifestItemLabel name={item.id} />
+            </Grid>
+            <Grid
+              item
+              xs={item.size === "sm" ? 6 : 8}
+              sm={item.size === "sm" ? 4 : 9}
+            >
+              <ManifestFormControlItem
+                id={item.id}
+                label={item.label}
+                type={item.type}
+                selections={item.selections}
+                manifest={props.manifest}
+                onChange={props.onChange}
+              />
+            </Grid>
+          </React.Fragment>
+        );
+      })}
+    </React.Fragment>
+  );
+}

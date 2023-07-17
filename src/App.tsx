@@ -1,12 +1,6 @@
 import React from "react";
 import { Box, Button, Grid, Paper } from "@mui/material";
-
-import "./App.css";
-import { ManifestRadioGroupItem } from "./ManifestRadioGroupItem";
-import { manifestItemsList } from "./ManifestItemsList";
-import { ManifestItemLabel } from "./ManifestItemLabel";
-import { ManifestTextItem } from "./ManifestTextItem";
-import { ManifestCheckboxGroupItem } from "./ManifestCheckboxGroupItem";
+import { ManifestItemsList } from "./ManifestItemsList";
 import { ManifestType, emptyManifest, initManifest } from "./ManifestType";
 import { setManifestLink } from "./PageManifestMediator";
 
@@ -47,17 +41,9 @@ function App() {
   const [manifestValue, setManifestValue] =
     React.useState<ManifestType>(initialManifest);
 
-  const inputChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    console.log(name, value);
-    setManifestValue({ ...manifestValue, [name]: value });
+  const onFormChanged = (newManifest: ManifestType) => {
     setShowResult(false);
-  };
-
-  const iconChangeHandler = (name: string, newValue: Array<string>) => {
-    console.log("icon changed", name, newValue);
-    setManifestValue({ ...manifestValue, [name]: newValue });
-    setShowResult(false);
+    setManifestValue(newManifest);
   };
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -80,49 +66,10 @@ function App() {
         sx={{ padding: 5 }}
       >
         <Grid container spacing={2}>
-          {manifestItemsList.map((item) => {
-            return (
-              <React.Fragment key={item.id}>
-                <Grid item xs={4} sm={2}>
-                  <ManifestItemLabel name={item.id} />
-                </Grid>
-                <Grid
-                  item
-                  xs={item.size === "sm" ? 6 : 8}
-                  sm={item.size === "sm" ? 4 : 9}
-                >
-                  {item.type === "radio" ? (
-                    <ManifestRadioGroupItem
-                      id={item.id}
-                      value={
-                        manifestValue[item.id as keyof ManifestType] as string
-                      }
-                      selections={item.selections as Array<string>}
-                      onChange={inputChangeHandler}
-                    />
-                  ) : (
-                    <ManifestTextItem
-                      id={item.id}
-                      label={item.label}
-                      value={manifestValue[item.id as keyof ManifestType]}
-                      onChange={inputChangeHandler}
-                    />
-                  )}
-                </Grid>
-              </React.Fragment>
-            );
-          })}
-          <Grid item xs={4} sm={2}>
-            <ManifestItemLabel name="icons" />
-          </Grid>
-          <Grid item xs={8} sm={9}>
-            <ManifestCheckboxGroupItem
-              id="icons"
-              value={manifestValue.icons}
-              selections={["192", "256", "512"]}
-              onChange={iconChangeHandler}
-            />
-          </Grid>
+          <ManifestItemsList
+            manifest={manifestValue}
+            onChange={onFormChanged}
+          />
           <Grid item xs={4}>
             <Button
               variant="contained"

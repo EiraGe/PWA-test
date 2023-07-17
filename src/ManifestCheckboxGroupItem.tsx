@@ -7,7 +7,7 @@ interface ManifestMultiSelectProps {
   id: string;
   value: Array<string>;
   selections: Array<string>;
-  onChange: any;
+  onChange: (name: string, value: Array<string>) => void;
 }
 
 export function ManifestCheckboxGroupItem(props: ManifestMultiSelectProps) {
