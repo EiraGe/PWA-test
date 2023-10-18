@@ -16,7 +16,7 @@ export function emptyManifest(): ManifestType {
     short_name: "",
     start_url: "",
     scope: "",
-    icons: ["192", "512"],
+    icons: [],
     display: "",
     orientation: "",
     theme_color: "",
