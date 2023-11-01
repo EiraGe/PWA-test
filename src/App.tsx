@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Button, Grid, Paper } from "@mui/material";
 import { ManifestItemsList } from "./ManifestItemsList";
 import { ManifestType, emptyManifest, initManifest } from "./ManifestType";
-import { setManifestLink } from "./PageManifestMediator";
+import { setManifestLink } from "./ManifestMediator";
 
 function readLSManifest(): ManifestType | null {
   let manifestString = localStorage.getItem("manifest");
