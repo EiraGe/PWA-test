@@ -23,14 +23,20 @@ export function setManifestLink(manifestValue: ManifestType) {
     e.rel = "manifest";
   }
 
-  let manifestIcons: Array<object> = [];
-  if (manifestValue.icons.length > 0) {
-    manifestIcons = manifestValue.icons.map((icon) => iconIdToIconObject(icon));
+  let renderManifest: { [key: string]: any } = {};
+  let key: keyof ManifestType;
+  for (key in manifestValue) {
+    if (key !== "icons" && manifestValue[key]) {
+      // if (manifestValue[key] && manifestValue[key].length > 0)
+      renderManifest[key] = manifestValue[key];
+      console.log(key, manifestValue[key]);
+    }
   }
-  let renderManifest = {
-    ...manifestValue,
-    icons: manifestIcons,
-  };
+  if (manifestValue.icons.length > 0) {
+    renderManifest["icons"] = manifestValue.icons.map((icon) =>
+      iconIdToIconObject(icon)
+    );
+  }
   const stringManifest = JSON.stringify(renderManifest);
   const blob = new Blob([stringManifest], { type: "application/json" });
   const manifestURL = URL.createObjectURL(blob);
