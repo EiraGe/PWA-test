@@ -15,7 +15,7 @@ function iconIdToIconObject(id: string) {
   };
 }
 
-function generateManifestText(manifestValue: ManifestType) {
+export function generateManifestText(manifestValue: ManifestType) {
   let e = document.getElementById("manifest-placeholder") as HTMLLinkElement;
   if (!e) {
     e = document.createElement<"link">("link");
@@ -23,31 +23,31 @@ function generateManifestText(manifestValue: ManifestType) {
     e.rel = "manifest";
   }
 
-  let renderManifest: { [key: string]: any } = {};
-  let key: keyof ManifestType;
-  for (key in manifestValue) {
-    if (key !== "icons" && manifestValue[key]) {
-      renderManifest[key] = manifestValue[key];
-      console.log(key, manifestValue[key]);
+  const replacer = (key: string, value: any) => {
+    if (key === "icons") {
+      if (value.length > 0) {
+        return value.map((icon: string) => iconIdToIconObject(icon));
+      }
+      return undefined;
     }
-  }
-  if (manifestValue.icons.length > 0) {
-    renderManifest["icons"] = manifestValue.icons.map((icon) =>
-      iconIdToIconObject(icon)
-    );
-  }
-  const stringManifest = JSON.stringify(renderManifest);
-  return stringManifest;
+    return value || undefined;
+  };
+
+  const manifestString = JSON.stringify(manifestValue, replacer, 4);
+  return manifestString;
 }
 
-export function setManifestLink(manifestValue: ManifestType) {
+export function setManifestLink(stringManifest: string | undefined) {
   let e = document.getElementById("manifest-placeholder") as HTMLLinkElement;
+  if (!stringManifest) {
+    if (e) e.remove();
+    return;
+  }
   if (!e) {
     e = document.createElement<"link">("link");
     e.id = "manifest-placeholder";
     e.rel = "manifest";
   }
-  const stringManifest = generateManifestText(manifestValue);
   const blob = new Blob([stringManifest], { type: "application/json" });
   const manifestURL = URL.createObjectURL(blob);
   e.setAttribute("href", manifestURL);

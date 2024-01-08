@@ -84,7 +84,7 @@ export const manifestItemsList: Array<ManifestItemProps> = [
 
 export function ManifestItemsList(props: any) {
   return (
-    <React.Fragment>
+    <Grid container spacing={2} sx={{ padding: 5 }}>
       {manifestItemsList.map((item) => {
         return (
           <React.Fragment key={item.id}>
@@ -94,8 +94,7 @@ export function ManifestItemsList(props: any) {
             <Grid
               item
               xs={item.size === "sm" ? 6 : 8}
-              sm={item.size === "sm" ? 4 : 9}
-            >
+              sm={item.size === "sm" ? 4 : 9}>
               <ManifestFormControlItem
                 id={item.id}
                 label={item.label}
@@ -108,6 +107,6 @@ export function ManifestItemsList(props: any) {
           </React.Fragment>
         );
       })}
-    </React.Fragment>
+    </Grid>
   );
 }
