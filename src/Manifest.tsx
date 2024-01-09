@@ -13,19 +13,19 @@ import { generateManifestText, setManifestLink } from "./ManifestMediator";
 import { updateToLS } from "./ManifestLocalStorageMediator";
 
 export function Manifest() {
-  const [showManifest, setShowManifest] = React.useState(false);
+  const [hasManifest, setHasManifest] = React.useState(true);
   const [stringManifest, setStringManifest] = React.useState<string>("");
 
   const handleShowManifestChange = () => {
-    setShowManifest((prev) => !prev);
-    if (!showManifest) {
+    setHasManifest((prev) => !prev);
+    if (!hasManifest) {
       updateToLS(undefined);
       setManifestLink(undefined);
     }
   };
 
   const handleSetManifest = (newManifest: ManifestType) => {
-    setShowManifest(true);
+    setHasManifest(true);
     const stringManifest = generateManifestText(newManifest);
     setStringManifest(stringManifest);
   };
@@ -45,11 +45,11 @@ export function Manifest() {
     <Paper elevation={3} sx={{ marginRight: "0%", marginLeft: "0%" }}>
       <FormControlLabel
         control={
-          <Switch checked={showManifest} onChange={handleShowManifestChange} />
+          <Switch checked={hasManifest} onChange={handleShowManifestChange} />
         }
-        label="showManifest"
+        label="Add Manifest"
       />
-      <Collapse in={showManifest}>
+      <Collapse in={hasManifest}>
         <ManifestControl
           setManifestHandler={handleSetManifest}></ManifestControl>
         <Divider />

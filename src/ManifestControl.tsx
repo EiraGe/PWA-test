@@ -7,7 +7,6 @@ import { readLSManifest, updateToLS } from "./ManifestLocalStorageMediator";
 export function ManifestControl(props: any) {
   const { setManifestHandler } = props;
 
-  const [showResult, setShowResult] = React.useState(false);
   const [manifestValue, setManifestValue] = React.useState<ManifestType>(
     initManifest(window.location.origin)
   );
@@ -21,12 +20,10 @@ export function ManifestControl(props: any) {
   }, []);
 
   const onFormChanged = (newManifest: ManifestType) => {
-    setShowResult(false);
     setManifestValue(newManifest);
   };
 
   const SubmitNewManifest = (manifest: ManifestType) => {
-    setShowResult(true);
     updateToLS(manifest);
     setManifestHandler(manifest);
   };
@@ -65,9 +62,6 @@ export function ManifestControl(props: any) {
             }}>
             Submit
           </Button>
-        </Grid>
-        <Grid item xs={12} hidden={!showResult}>
-          Done!
         </Grid>
       </Grid>
     </Box>

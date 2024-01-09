@@ -69,7 +69,7 @@ export function ManifestContent({
   onStringManifestCommit,
 }: any) {
   return (
-    <Box component="form" onSubmit={onStringManifestCommit} sx={{ padding: 5 }}>
+    <Box component="form" onSubmit={onStringManifestCommit} sx={{ padding: 1 }}>
       <Textarea
         minRows={3}
         placeholder="{}"
