@@ -80,6 +80,13 @@ export const manifestItemsList: Array<ManifestItemProps> = [
     selections: ["128", "192", "256", "512"],
     size: "md",
   },
+  {
+    id: "related_applications",
+    label: "Related apps",
+    type: "checkbox",
+    selections: ["Play"],
+    size: "md",
+  },
 ];
 
 export function ManifestItemsList(props: any) {
@@ -89,7 +96,7 @@ export function ManifestItemsList(props: any) {
         return (
           <React.Fragment key={item.id}>
             <Grid item xs={4} sm={2}>
-              <ManifestItemLabel name={item.id} />
+              <ManifestItemLabel name={item.label} />
             </Grid>
             <Grid
               item
@@ -97,7 +104,7 @@ export function ManifestItemsList(props: any) {
               sm={item.size === "sm" ? 4 : 9}>
               <ManifestFormControlItem
                 id={item.id}
-                label={item.label}
+                label={item.id}
                 type={item.type}
                 selections={item.selections}
                 manifest={props.manifest}

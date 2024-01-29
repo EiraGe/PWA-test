@@ -8,6 +8,8 @@ export type ManifestType = {
   orientation: string;
   theme_color: string;
   background_color: string;
+  prefer_related_applications: Boolean;
+  related_applications: Array<string>;
 };
 
 export function emptyManifest(): ManifestType {
@@ -21,6 +23,8 @@ export function emptyManifest(): ManifestType {
     orientation: "",
     theme_color: "",
     background_color: "",
+    prefer_related_applications: false,
+    related_applications: [],
   };
 }
 
@@ -35,5 +39,7 @@ export function initManifest(scope: string): ManifestType {
     background_color: "white",
     display: "standalone",
     orientation: "",
+    prefer_related_applications: false,
+    related_applications: [],
   };
 }

@@ -23,8 +23,8 @@ export function ManifestFormControlItem(props: ManifestFormControlItemProps) {
     props.onChange({ ...manifest, [name]: value });
   };
 
-  const iconChangeHandler = (name: string, value: Array<string>) => {
-    console.log("icon changed", name, value);
+  const selectionChangeHandler = (name: string, value: Array<string>) => {
+    console.log(name, value);
     props.onChange({ ...manifest, [name]: value });
   };
 
@@ -41,10 +41,10 @@ export function ManifestFormControlItem(props: ManifestFormControlItemProps) {
     case "checkbox":
       return (
         <ManifestCheckboxGroupItem
-          id="icons"
-          value={manifest.icons}
+          id={props.id}
+          value={manifest[props.id as keyof ManifestType] as []}
           selections={props.selections as Array<string>}
-          onChange={iconChangeHandler}
+          onChange={selectionChangeHandler}
         />
       );
     default:

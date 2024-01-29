@@ -15,6 +15,14 @@ function iconIdToIconObject(id: string) {
   };
 }
 
+function relatedApplication(platform: string) {
+  return {
+    platform: "play",
+    url: "https://play.google.com/store/apps/details",
+    id: "com.chrome.canary",
+  };
+}
+
 export function generateManifestText(manifestValue: ManifestType) {
   let e = document.getElementById("manifest-placeholder") as HTMLLinkElement;
   if (!e) {
@@ -23,10 +31,18 @@ export function generateManifestText(manifestValue: ManifestType) {
     e.rel = "manifest";
   }
 
+  manifestValue.prefer_related_applications =
+    manifestValue.related_applications.length > 0;
+
   const replacer = (key: string, value: any) => {
     if (key === "icons") {
       if (value.length > 0) {
         return value.map((icon: string) => iconIdToIconObject(icon));
+      }
+      return undefined;
+    } else if (key === "related_applications") {
+      if (value.length > 0) {
+        return value.map((id: string) => relatedApplication(id));
       }
       return undefined;
     }
